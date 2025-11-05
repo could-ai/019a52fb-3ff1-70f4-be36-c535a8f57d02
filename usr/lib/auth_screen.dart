@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:couldai_user_app/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -9,6 +10,13 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _ownerEmailController = TextEditingController();
+  final _ownerPasswordController = TextEditingController();
+
+  // Hardcoded owner credentials as per the request.
+  // Note: This is not a secure practice for a real application.
+  final String _ownerEmail = 'kolanukirankumar@gmail.com';
+  final String _ownerPassword = 'darkmoonshadow';
 
   @override
   void initState() {
@@ -19,7 +27,26 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   @override
   void dispose() {
     _tabController.dispose();
+    _ownerEmailController.dispose();
+    _ownerPasswordController.dispose();
     super.dispose();
+  }
+
+  void _handleOwnerLogin() {
+    if (_ownerEmailController.text == _ownerEmail &&
+        _ownerPasswordController.text == _ownerPassword) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid email or password.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -56,8 +83,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             // Owner Login
             Text('Owner Login', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _ownerEmailController,
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
@@ -65,8 +93,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 12),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _ownerPasswordController,
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
@@ -75,9 +104,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // TODO: Handle Owner Login with OTP verification
-              },
+              onPressed: _handleOwnerLogin,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
